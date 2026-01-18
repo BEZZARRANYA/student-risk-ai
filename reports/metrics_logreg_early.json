@@ -1,0 +1,16 @@
+{
+  "config": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "model_name": "logreg_early",
+    "use_late_features": false
+  },
+  "metrics": {
+    "roc_auc": 0.7278664731494919,
+    "f1": 0.6,
+    "accuracy": 0.6962025316455697,
+    "n_train": 316,
+    "n_test": 79,
+    "risk_rate_test": 0.3291139240506329
+  }
+}

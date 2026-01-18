@@ -1,0 +1,6 @@
+{
+  "auc": 0.7278664731494919,
+  "confusion_matrix_fig": "reports/figures/confusion_matrix_logreg_early.png",
+  "roc_fig": "reports/figures/roc_logreg_early.png",
+  "calibration_fig": "reports/figures/calibration_logreg_early.png"
+}
