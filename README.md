@@ -57,6 +57,17 @@ The dataset is relatively small (395 students), so simpler models can sometimes 
 - Logistic Regression: `reports/figures/roc_logreg_early.png`, `reports/figures/calibration_logreg_early.png`
 - Random Forest: `reports/figures/roc_rf_early.png`, `reports/figures/calibration_rf_early.png`
 
+## Interpretation (research notes)
+
+- **Random Forest achieves slightly higher accuracy but much lower F1**, suggesting it predicts the majority class (not at-risk) more often.
+- **Logistic Regression achieves better ROC-AUC and F1**, making it more suitable when the goal is early identification of at-risk students (where false negatives are costly).
+- This illustrates why **accuracy alone can be misleading** for imbalanced decision-support tasks.
+
+### Next improvements
+- Use **cross-validation** and hyperparameter tuning for Random Forest (e.g., max_depth, min_samples_leaf).
+- Optimize the decision threshold to improve recall/F1 for intervention settings.
+- Add subgroup evaluation (e.g., by sex, parental education) to check for fairness risks.
+
 ## Explainability
 We provide:
 
