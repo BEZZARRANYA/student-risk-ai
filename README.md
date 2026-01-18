@@ -24,5 +24,4 @@ The goal is to demonstrate responsible and transparent AI for decision support i
 4. Explainability analysis
 5. Evaluation and reporting
 
-## Notes
-This project is designed as a research-oriented AI system suitable for graduate-level study and scholarship applications.
+
