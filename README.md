@@ -1,27 +1,74 @@
 # Explainable Student Risk Prediction System
 
-This project implements an explainable machine learning system to predict academic risk among students using behavioral and performance features.
+An explainable machine learning pipeline to predict **academic risk** (at-risk vs not at-risk) using student demographic + behavioral features.
+The project focuses on **transparent decision support** for education: not only predicting risk, but also explaining *why*.
 
-The goal is to demonstrate responsible and transparent AI for decision support in education.
+## Dataset
+- UCI Student Performance dataset (Math course: `student-mat.csv`)
+- Grades range from 0–20.
 
-## Objectives
-- Predict student academic risk using interpretable ML models
-- Provide feature-level explanations for predictions
-- Evaluate performance beyond accuracy (calibration, robustness)
-- Support ethical and transparent AI usage
+## Target definition (Risk Label)
+We define:
 
-## Tech Stack
-- Python
-- pandas, NumPy
-- scikit-learn
-- matplotlib
-- SHAP (for explainability)
+- **at_risk = 1 if final grade (G3) < 10, else 0**
 
-## Planned Workflow
-1. Data preprocessing and feature engineering
-2. Baseline ML model (logistic regression)
-3. Enhanced model (random forest)
-4. Explainability analysis
-5. Evaluation and reporting
+This creates a practical binary risk target aligned with common pass/fail thresholds.
 
+## Leakage-aware feature sets (research-oriented)
+We support two experimental settings:
+
+1. **Early-warning (primary setting)**  
+   Uses only features available before final exams (excludes `G1`, `G2`).  
+   This is the most realistic setting for early intervention.
+
+2. **Late-term (secondary / optional)**  
+   Includes `G1`, `G2` (earlier period grades), which improves accuracy but can partially “shortcut” prediction.
+   We keep this setting to analyze tradeoffs and report transparently.
+
+## Baseline model
+- Logistic Regression with:
+  - categorical one-hot encoding
+  - missing-value imputation
+  - `class_weight="balanced"` for class imbalance
+
+Artifacts are saved for reproducibility:
+- Model: `models/logreg_early.joblib`
+- Metrics: `reports/metrics_logreg_early.json`
+
+## Evaluation (beyond accuracy)
+We generate research-style evaluation plots:
+
+- Confusion Matrix: `reports/figures/confusion_matrix_logreg_early.png`
+- ROC Curve: `reports/figures/roc_logreg_early.png`
+- Calibration Curve: `reports/figures/calibration_logreg_early.png`
+
+Calibration is included to check whether predicted probabilities are reliable for decision support.
+
+## Explainability
+We provide:
+
+### Global explanation
+Top features by coefficient magnitude:
+- CSV: `reports/global_top_features_logreg_early.csv`
+- Plot: `reports/figures/global_top_features_logreg_early.png`
+
+### Local explanation (example student)
+Feature-level contributions for a single high-risk prediction:
+- `reports/local_explanation_example_logreg_early.csv`
+
+## Ethical considerations
+This project is intended for **decision support**, not automated punishment.
+Predictions should be used to allocate supportive resources (tutoring, outreach), and explanations should be reviewed by educators.
+Models may reflect socioeconomic or demographic correlations, so subgroup evaluation is recommended before real deployment.
+
+## How to run
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+python -m src.data
+python -m src.train
+python -m src.evaluate
+python -m src.explain
 
