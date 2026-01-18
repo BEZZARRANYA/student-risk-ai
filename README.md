@@ -44,6 +44,19 @@ We generate research-style evaluation plots:
 
 Calibration is included to check whether predicted probabilities are reliable for decision support.
 
+## Model comparison (Early-warning setting)
+
+The dataset is relatively small (395 students), so simpler models can sometimes generalize as well as or better than more complex ones.
+
+**Results:**
+| Model (Early-warning) | ROC-AUC | F1 | Accuracy |
+|---|---:|---:|---:|
+| Logistic Regression | ... | ... | ... |
+| Random Forest | ... | ... | ... |
+**Plots (both models):**
+- Logistic Regression: `reports/figures/roc_logreg_early.png`, `reports/figures/calibration_logreg_early.png`
+- Random Forest: `reports/figures/roc_rf_early.png`, `reports/figures/calibration_rf_early.png`
+
 ## Explainability
 We provide:
 
