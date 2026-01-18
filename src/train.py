@@ -1,4 +1,5 @@
 from __future__ import annotations
+from sklearn.ensemble import RandomForestClassifier
 
 import json
 from dataclasses import asdict, dataclass
@@ -30,6 +31,7 @@ class TrainConfig:
     random_state: int = 42
     model_name: str = "logreg_early"
     use_late_features: bool = False  # early-warning by default
+    model_type: str = "logreg"  # "logreg" or "rf"
 
 
 def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
@@ -66,7 +68,17 @@ def train_and_eval(X: pd.DataFrame, y: pd.Series, cfg: TrainConfig) -> Tuple[Pip
 
     preprocessor = build_preprocessor(X)
 
-    clf = LogisticRegression(max_iter=2000, class_weight="balanced")
+    if cfg.model_type == "logreg":
+        clf = LogisticRegression(max_iter=2000, class_weight="balanced")
+    elif cfg.model_type == "rf":
+        clf = RandomForestClassifier(
+            n_estimators=400,
+            random_state=cfg.random_state,
+            class_weight="balanced_subsample",
+            n_jobs=-1,
+        )
+    else:
+        raise ValueError("model_type must be 'logreg' or 'rf'")
 
     model = Pipeline(
         steps=[
@@ -98,7 +110,7 @@ def main() -> None:
     df = add_labels(df, cfg_data)
     X_early, X_late, y = split_feature_sets(df)
 
-    cfg = TrainConfig()
+    cfg = TrainConfig(model_name="rf_early", model_type="rf")
     X = X_late if cfg.use_late_features else X_early
 
     model, metrics = train_and_eval(X, y, cfg)
