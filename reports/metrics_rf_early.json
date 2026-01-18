@@ -1,0 +1,17 @@
+{
+  "config": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "model_name": "rf_early",
+    "use_late_features": false,
+    "model_type": "rf"
+  },
+  "metrics": {
+    "roc_auc": 0.6948476052249637,
+    "f1": 0.41025641025641024,
+    "accuracy": 0.7088607594936709,
+    "n_train": 316,
+    "n_test": 79,
+    "risk_rate_test": 0.3291139240506329
+  }
+}

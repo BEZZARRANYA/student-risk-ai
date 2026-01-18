@@ -1,0 +1,7 @@
+{
+  "model_name": "rf_early",
+  "auc": 0.6948476052249637,
+  "confusion_matrix_fig": "reports/figures/confusion_matrix_rf_early.png",
+  "roc_fig": "reports/figures/roc_rf_early.png",
+  "calibration_fig": "reports/figures/calibration_rf_early.png"
+}

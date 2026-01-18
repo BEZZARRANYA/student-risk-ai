@@ -42,57 +42,56 @@ def get_test_split() -> Tuple[pd.DataFrame, pd.Series, pd.Series]:
 def main() -> None:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-    model = load_model("logreg_early")
-    X_test, y_test, y_train = get_test_split()
+    # Evaluate both models
+    for model_name in ["logreg_early", "rf_early"]:
+        model = load_model(model_name)
+        X_test, y_test, _ = get_test_split()
 
-    proba = model.predict_proba(X_test)[:, 1]
-    pred = (proba >= 0.5).astype(int)
+        proba = model.predict_proba(X_test)[:, 1]
+        pred = (proba >= 0.5).astype(int)
 
-    # 1) Confusion matrix
-    cm_path = FIG_DIR / "confusion_matrix_logreg_early.png"
-    disp = ConfusionMatrixDisplay.from_predictions(y_test, pred)
-    plt.title("Confusion Matrix — Logistic Regression (Early Warning)")
-    plt.tight_layout()
-    plt.savefig(cm_path, dpi=200)
-    plt.close()
+        # 1) Confusion matrix
+        cm_path = FIG_DIR / f"confusion_matrix_{model_name}.png"
+        ConfusionMatrixDisplay.from_predictions(y_test, pred)
+        plt.title(f"Confusion Matrix — {model_name}")
+        plt.tight_layout()
+        plt.savefig(cm_path, dpi=200)
+        plt.close()
 
-    # 2) ROC curve
-    roc_path = FIG_DIR / "roc_logreg_early.png"
-    RocCurveDisplay.from_predictions(y_test, proba)
-    auc = roc_auc_score(y_test, proba)
-    plt.title(f"ROC Curve — Logistic Regression (AUC={auc:.3f})")
-    plt.tight_layout()
-    plt.savefig(roc_path, dpi=200)
-    plt.close()
+        # 2) ROC curve
+        roc_path = FIG_DIR / f"roc_{model_name}.png"
+        RocCurveDisplay.from_predictions(y_test, proba)
+        auc = roc_auc_score(y_test, proba)
+        plt.title(f"ROC Curve — {model_name} (AUC={auc:.3f})")
+        plt.tight_layout()
+        plt.savefig(roc_path, dpi=200)
+        plt.close()
 
-    # 3) Calibration curve
-    cal_path = FIG_DIR / "calibration_logreg_early.png"
-    prob_true, prob_pred = calibration_curve(y_test, proba, n_bins=10, strategy="uniform")
-    plt.plot(prob_pred, prob_true, marker="o")
-    plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.title("Calibration Curve — Logistic Regression (Early Warning)")
-    plt.xlabel("Mean predicted probability")
-    plt.ylabel("Fraction of positives")
-    plt.tight_layout()
-    plt.savefig(cal_path, dpi=200)
-    plt.close()
+        # 3) Calibration curve
+        cal_path = FIG_DIR / f"calibration_{model_name}.png"
+        prob_true, prob_pred = calibration_curve(y_test, proba, n_bins=10, strategy="uniform")
+        plt.plot(prob_pred, prob_true, marker="o")
+        plt.plot([0, 1], [0, 1], linestyle="--")
+        plt.title(f"Calibration Curve — {model_name}")
+        plt.xlabel("Mean predicted probability")
+        plt.ylabel("Fraction of positives")
+        plt.tight_layout()
+        plt.savefig(cal_path, dpi=200)
+        plt.close()
 
-    # Save evaluation summary
-    summary_path = REPORTS_DIR / "evaluation_logreg_early.json"
-    summary = {
-        "auc": float(auc),
-        "confusion_matrix_fig": str(cm_path.relative_to(PROJECT_ROOT)),
-        "roc_fig": str(roc_path.relative_to(PROJECT_ROOT)),
-        "calibration_fig": str(cal_path.relative_to(PROJECT_ROOT)),
-    }
-    with open(summary_path, "w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2)
+        # Save evaluation summary
+        summary_path = REPORTS_DIR / f"evaluation_{model_name}.json"
+        summary = {
+            "model_name": model_name,
+            "auc": float(auc),
+            "confusion_matrix_fig": str(cm_path.relative_to(PROJECT_ROOT)),
+            "roc_fig": str(roc_path.relative_to(PROJECT_ROOT)),
+            "calibration_fig": str(cal_path.relative_to(PROJECT_ROOT)),
+        }
+        with open(summary_path, "w", encoding="utf-8") as f:
+            json.dump(summary, f, indent=2)
 
-    print("Saved figures:")
-    print("-", cm_path)
-    print("-", roc_path)
-    print("-", cal_path)
-    print("Saved summary:", summary_path)
+        print(f"[{model_name}] Saved figures + summary.")
 
 
 if __name__ == "__main__":
